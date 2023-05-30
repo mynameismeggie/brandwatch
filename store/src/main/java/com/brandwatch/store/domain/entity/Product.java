@@ -1,33 +1,24 @@
 package com.brandwatch.store.domain.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
-
+@Getter
 @Entity
 @Table(name = "product")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
+@Accessors(fluent = true, makeFinal = true)
+@SuperBuilder(toBuilder = true)
+public class Product extends BaseEntity {
     @NotBlank
-    private String productName;
+    private String name;
 
-    @Positive
+    @PositiveOrZero
     @NotNull
-    private Integer quantity;
+    private Long quantity;
 }
