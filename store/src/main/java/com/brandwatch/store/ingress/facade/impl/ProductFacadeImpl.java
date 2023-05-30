@@ -2,8 +2,8 @@ package com.brandwatch.store.ingress.facade.impl;
 
 import com.brandwatch.store.domain.entity.Product;
 import com.brandwatch.store.domain.service.ProductService;
-import com.brandwatch.store.egress.consumer.MessageConsumer;
-import com.brandwatch.store.egress.producer.MessageProducer;
+import com.brandwatch.store.egress.producer.ProductMessageProducer;
+import com.brandwatch.store.ingress.consumer.ProductMessageConsumer;
 import com.brandwatch.store.ingress.facade.ProductFacade;
 import com.brandwatch.store.ingress.request.LoadProductRequest;
 import com.brandwatch.store.ingress.response.OrderResponse;
@@ -20,12 +20,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductFacadeImpl implements ProductFacade {
     private final ProductService productService;
-    private final MessageConsumer messageConsumer;
-    private final MessageProducer messageProducer;
+    private final ProductMessageConsumer productMessageConsumer;
+    private final ProductMessageProducer productMessageProducer;
 
     @Override
     public List<ProductOrderResponse> getMissingProducts() {
-        final var pendingProducts = messageConsumer.getPendingProducts();
+        final var pendingProducts = productMessageProducer.getPendingProducts();
         final var productDbMap = productService.findAllAsMap();
         final var missingProducts = new ArrayList<ProductOrderResponse>();
 
@@ -44,7 +44,7 @@ public class ProductFacadeImpl implements ProductFacade {
 
     @Override
     public void loadProducts(List<LoadProductRequest> loadProductRequests) {
-        final var pendingOrders = messageConsumer.getPendingOrders();
+        final var pendingOrders = productMessageProducer.getPendingOrders();
         final var productDbMap = productService.findAllAsMap();
         loadProductRequests.forEach(productRequest -> addProductQuantities(productRequest, productDbMap));
 
@@ -57,7 +57,7 @@ public class ProductFacadeImpl implements ProductFacade {
         });
 
         productService.updateAll(productDbMap.values());
-        messageProducer.sendSuccessfulOrders(successfulOrders);
+        productMessageProducer.sendSuccessfulOrders(successfulOrders);
 
     }
 

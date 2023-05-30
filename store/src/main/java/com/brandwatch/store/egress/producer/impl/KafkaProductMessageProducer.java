@@ -1,6 +1,6 @@
-package com.brandwatch.store.egress.consumer.impl;
+package com.brandwatch.store.egress.producer.impl;
 
-import com.brandwatch.store.egress.consumer.MessageConsumer;
+import com.brandwatch.store.egress.producer.ProductMessageProducer;
 import com.brandwatch.store.ingress.response.OrderResponse;
 import com.brandwatch.store.ingress.response.ProductOrderResponse;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class KafkaMessageConsumer implements MessageConsumer {
+public class KafkaProductMessageProducer implements ProductMessageProducer {
     @Override
     public List<ProductOrderResponse> getPendingProducts() {
         return null;
@@ -17,5 +17,9 @@ public class KafkaMessageConsumer implements MessageConsumer {
     @Override
     public List<OrderResponse> getPendingOrders() {
         return null;
+    }
+
+    @Override
+    public void sendSuccessfulOrders(List<OrderResponse> successfulOrders) {
     }
 }
