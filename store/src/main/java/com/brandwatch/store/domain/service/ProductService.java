@@ -5,14 +5,15 @@ import com.brandwatch.store.domain.entity.Product;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface ProductService {
     List<Product> findAll();
 
-    Optional<Product> findById(UUID id);
+    Optional<Product> findById(Long id);
 
-    Map<UUID, Product> findAllAsMap();
+    Map<Long, Product> findAllByIdIn(List<Long> ids);
+
+    Map<Long, Product> findAllAsMap();
 
     Product create(Product product);
 
@@ -20,5 +21,5 @@ public interface ProductService {
 
     Product update(Product product);
 
-    void deleteById(UUID id);
+    void deleteById(Long id);
 }

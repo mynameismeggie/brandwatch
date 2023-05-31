@@ -11,15 +11,16 @@ import java.util.List;
 public class KafkaProductMessageProducer implements ProductMessageProducer {
     @Override
     public List<ProductOrderResponse> getPendingProducts() {
-        return null;
+        return List.of();
     }
 
     @Override
     public List<OrderResponse> getPendingOrders() {
-        return null;
+        return List.of();
     }
 
     @Override
-    public void sendSuccessfulOrders(List<OrderResponse> successfulOrders) {
+    public List<OrderResponse> sendSuccessfulOrders(List<OrderResponse> successfulOrders) {
+        return successfulOrders;
     }
 }

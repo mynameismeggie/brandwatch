@@ -1,11 +1,13 @@
 package com.brandwatch.store.ingress.facade.impl;
 
-import com.brandwatch.store.domain.entity.Product;
+import com.brandwatch.store.domain.service.ProductHelperService;
 import com.brandwatch.store.domain.service.ProductService;
 import com.brandwatch.store.egress.producer.ProductMessageProducer;
-import com.brandwatch.store.ingress.consumer.ProductMessageConsumer;
 import com.brandwatch.store.ingress.facade.ProductFacade;
-import com.brandwatch.store.ingress.request.LoadProductRequest;
+import com.brandwatch.store.ingress.mapper.OrderMapper;
+import com.brandwatch.store.ingress.mapper.ProductMapper;
+import com.brandwatch.store.ingress.request.OrderRequest;
+import com.brandwatch.store.ingress.request.ProductRequest;
 import com.brandwatch.store.ingress.response.OrderResponse;
 import com.brandwatch.store.ingress.response.ProductOrderResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +15,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProductFacadeImpl implements ProductFacade {
+    private final OrderMapper orderMapper;
+    private final ProductMapper productMapper;
     private final ProductService productService;
-    private final ProductMessageConsumer productMessageConsumer;
     private final ProductMessageProducer productMessageProducer;
+    private final ProductHelperService productHelperService;
 
     @Override
     public List<ProductOrderResponse> getMissingProducts() {
@@ -33,7 +35,7 @@ public class ProductFacadeImpl implements ProductFacade {
             final var productFromDb = productDbMap.get(pendingProduct.id());
             final var missingProduct = ProductOrderResponse.builder()
                     .id(productFromDb.id())
-                    .requiredQuantity(pendingProduct.requiredQuantity() - productFromDb.quantity())
+                    .quantity(pendingProduct.quantity() - productFromDb.quantity())
                     .build();
 
             missingProducts.add(missingProduct);
@@ -43,41 +45,41 @@ public class ProductFacadeImpl implements ProductFacade {
     }
 
     @Override
-    public void loadProducts(List<LoadProductRequest> loadProductRequests) {
+    public void loadProducts(List<ProductRequest> productRequests) {
         final var pendingOrders = productMessageProducer.getPendingOrders();
         final var productDbMap = productService.findAllAsMap();
-        loadProductRequests.forEach(productRequest -> addProductQuantities(productRequest, productDbMap));
+
+        productHelperService.addProductQuantities(productMapper.toEntityFromRequest(productRequests), productDbMap);
 
         final var successfulOrders = new ArrayList<OrderResponse>();
         pendingOrders.forEach(pendingOrder -> {
-            if (isOrderCompletable(pendingOrder, productDbMap)) {
-                removeOrderQuantities(pendingOrder, productDbMap);
+            final var pendingProducts = productMapper.toEntityFromResponse(pendingOrder.products());
+            if (productHelperService.isOrderCompletable(pendingProducts, productDbMap)) {
+                productHelperService.removeProductQuantities(pendingProducts, productDbMap);
                 successfulOrders.add(pendingOrder);
             }
         });
 
         productService.updateAll(productDbMap.values());
-        productMessageProducer.sendSuccessfulOrders(successfulOrders);
-
+        if (!successfulOrders.isEmpty()) {
+            productMessageProducer.sendSuccessfulOrders(successfulOrders);
+        }
     }
 
-    private boolean isOrderCompletable(OrderResponse order, Map<UUID, Product> productMap) {
-        return order.products()
+    @Override
+    public void handleNewOrder(OrderRequest request) {
+        final var productIds = request.products()
                 .stream()
-                .allMatch(product -> productMap.get(product.id()).quantity() >= product.requiredQuantity());
-    }
+                .map(ProductRequest::id)
+                .toList();
 
-    private void addProductQuantities(LoadProductRequest productRequest, Map<UUID, Product> productMap) {
-        productMap.computeIfPresent(productRequest.id(),
-                (key, value) -> value.toBuilder()
-                        .quantity((value.quantity() + productRequest.quantity()))
-                        .build());
-    }
-
-    private void removeOrderQuantities(OrderResponse order, Map<UUID, Product> productMap) {
-        order.products().forEach(product -> productMap.computeIfPresent(product.id(),
-                (key, value) -> value.toBuilder()
-                        .quantity((value.quantity() - product.requiredQuantity()))
-                        .build()));
+        final var productDbMap = productService.findAllByIdIn(productIds);
+        final var newProducts = productMapper.toEntityFromRequest(request.products());
+        if (productHelperService.isOrderCompletable(newProducts, productDbMap)) {
+            productHelperService.removeProductQuantities(newProducts, productDbMap);
+            productService.updateAll(productDbMap.values());
+            final var successfulOrder = orderMapper.toOrderResponse(request);
+            productMessageProducer.sendSuccessfulOrders(List.of(successfulOrder));
+        }
     }
 }

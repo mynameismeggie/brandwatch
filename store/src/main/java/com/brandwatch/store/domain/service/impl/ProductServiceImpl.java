@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> findById(UUID id) {
+    public Optional<Product> findById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id must be not null when finding by id");
         }
@@ -30,8 +31,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Map<UUID, Product> findAllAsMap() {
-        return productRepository.findAllAsMap();
+    public Map<Long, Product> findAllByIdIn(List<Long> ids) {
+        if (ids == null) {
+            throw new IllegalArgumentException("Ids must be not null when finding by ids");
+        }
+        return productRepository.findByIdIn(ids)
+                .stream()
+                .collect(toMap(Product::id, product -> product));
+    }
+
+    @Override
+    public Map<Long, Product> findAllAsMap() {
+        return productRepository.findAll()
+                .stream()
+                .collect(toMap(Product::id, product -> product));
     }
 
     @Override
@@ -59,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         if (id != null) {
             productRepository.deleteById(id);
         }

@@ -10,5 +10,5 @@ public interface ProductMessageProducer {
 
     List<OrderResponse> getPendingOrders();
 
-    void sendSuccessfulOrders(List<OrderResponse> successfulOrders);
+    List<OrderResponse> sendSuccessfulOrders(List<OrderResponse> successfulOrders);
 }

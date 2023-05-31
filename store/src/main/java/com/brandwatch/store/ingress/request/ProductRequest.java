@@ -4,12 +4,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
-import java.util.UUID;
-
 @Builder
-public record LoadProductRequest(
+public record ProductRequest(
         @NotNull
-        UUID id,
+        @Positive
+        Long id,
         @NotNull
         @Positive
         Long quantity
