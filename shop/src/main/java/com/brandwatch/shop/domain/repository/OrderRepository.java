@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
-    @Transactional
-    void updateStatusByIdIn(List<UUID> ids, OrderStatus status);
-
     List<Order> findAllByStatus(OrderStatus status);
 
     List<ProductOrder> findDistinctProductsByStatus(OrderStatus status);
+
+    @Transactional
+    void updateStatusByIdIn(List<UUID> ids, OrderStatus status);
 }
