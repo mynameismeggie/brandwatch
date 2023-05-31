@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<Order> findById(UUID id) {
+    public Optional<Order> findById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Id must be not null when finding by id");
         }
@@ -63,15 +62,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateStatusByIds(List<UUID> ids, OrderStatus status) {
+    public void updateStatusByIds(List<Long> ids, OrderStatus status) {
         if (ids == null || status == null) {
             throw new IllegalArgumentException("Id and status must be not null when updating orders");
         }
-        orderRepository.updateStatusByIdIn(ids, status);
+        orderRepository.updateStatusByIdIn(status, ids);
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         if (id != null) {
             orderRepository.deleteById(id);
         }

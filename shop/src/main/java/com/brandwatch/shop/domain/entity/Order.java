@@ -6,20 +6,25 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
+
 @Getter
 @Entity
-@Table(name = "order")
+@Table(name = "order_table")
 @Accessors(fluent = true, makeFinal = true)
+@NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class Order extends BaseEntity {
-    @OneToMany
+    @OneToMany(cascade = ALL, mappedBy = "order")
     private List<ProductOrder> products;
 
-    @Enumerated
+    @Enumerated(STRING)
     private OrderStatus status;
 }

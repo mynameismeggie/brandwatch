@@ -6,7 +6,6 @@ import com.brandwatch.shop.domain.enums.OrderStatus;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Used for serving business logic for the Order Entity
@@ -14,12 +13,14 @@ import java.util.UUID;
 public interface OrderService {
     /**
      * Finds all orders
+     *
      * @return list of all orders
      */
     List<Order> findAll();
 
     /**
      * Finds all orders with requested status
+     *
      * @param status accepts OrderStatus
      * @return list of orders
      */
@@ -27,6 +28,7 @@ public interface OrderService {
 
     /**
      * Finds distinct products with requested status
+     *
      * @param status accepts OrderStatus
      * @return list of ProductOrder which contains product name and quantity
      */
@@ -34,13 +36,15 @@ public interface OrderService {
 
     /**
      * Finds order by id
-     * @param id accepts UUID
+     *
+     * @param id accepts Long
      * @return Optional of order
      */
-    Optional<Order> findById(UUID id);
+    Optional<Order> findById(Long id);
 
     /**
      * Creates order
+     *
      * @param order accepts Order entity
      * @return Order entity
      */
@@ -48,6 +52,7 @@ public interface OrderService {
 
     /**
      * Updates order
+     *
      * @param order accepts Order entity
      * @return Order entity
      */
@@ -55,14 +60,16 @@ public interface OrderService {
 
     /**
      * Updates order statuses by requested order ids and status
-     * @param ids accepts list of order ids
+     *
+     * @param ids    accepts list of order ids
      * @param status accepts OrderStatus
      */
-    void updateStatusByIds(List<UUID> ids, OrderStatus status);
+    void updateStatusByIds(List<Long> ids, OrderStatus status);
 
     /**
      * Deletes order by requested id
+     *
      * @param id accepts order id
      */
-    void deleteById(UUID id);
+    void deleteById(Long id);
 }
