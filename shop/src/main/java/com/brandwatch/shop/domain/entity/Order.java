@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -22,9 +23,10 @@ import static jakarta.persistence.EnumType.STRING;
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class Order extends BaseEntity {
-    @OneToMany(cascade = ALL, mappedBy = "order")
+    @OneToMany(cascade = ALL)
     private List<ProductOrder> products;
 
+    @NotNull
     @Enumerated(STRING)
     private OrderStatus status;
 }

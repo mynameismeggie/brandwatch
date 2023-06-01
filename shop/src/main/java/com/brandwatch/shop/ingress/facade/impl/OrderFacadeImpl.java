@@ -5,7 +5,6 @@ import com.brandwatch.shop.domain.service.OrderService;
 import com.brandwatch.shop.egress.producer.OrderMessageProducer;
 import com.brandwatch.shop.ingress.facade.OrderFacade;
 import com.brandwatch.shop.ingress.mapper.OrderMapper;
-import com.brandwatch.shop.ingress.mapper.ProductOrderMapper;
 import com.brandwatch.shop.ingress.request.CreateOrderRequest;
 import com.brandwatch.shop.ingress.request.OrderRequest;
 import com.brandwatch.shop.ingress.response.OrderResponse;
@@ -24,12 +23,11 @@ public class OrderFacadeImpl implements OrderFacade {
     private final OrderService orderService;
     private final OrderMapper orderMapper;
     private final OrderMessageProducer orderMessageProducer;
-    private final ProductOrderMapper productOrderMapper;
 
     @Override
     public List<ProductOrderResponse> findAllPendingProducts() {
         final var pendingProducts = orderService.findDistinctProductsByStatus(PENDING);
-        return productOrderMapper.toProductOrderResponse(pendingProducts);
+        return orderMapper.toProductOrderResponse(pendingProducts);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class OrderFacadeImpl implements OrderFacade {
 
     @Override
     public void create(CreateOrderRequest request) {
-        final var entityToSave = orderMapper.toEntity(request);
+        final var entityToSave = orderMapper.toEntity(request, PENDING);
         final var entitySaved = orderService.create(entityToSave);
         final var orderRequest = orderMapper.toOrderRequest(entitySaved);
         orderMessageProducer.sendNewOrder(orderRequest);

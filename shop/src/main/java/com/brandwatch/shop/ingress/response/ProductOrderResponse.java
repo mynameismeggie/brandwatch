@@ -7,10 +7,10 @@ import lombok.Builder;
 @Builder
 public record ProductOrderResponse(
         @NotNull
-        Long id,
+        Long productId,
 
         @NotNull
         @Positive
-        Long requiredQuantity
+        Long quantity
 ) {
 }

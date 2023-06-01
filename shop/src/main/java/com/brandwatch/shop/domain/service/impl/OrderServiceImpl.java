@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.*;
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -34,7 +36,13 @@ public class OrderServiceImpl implements OrderService {
         if (status == null) {
             throw new IllegalArgumentException("Status must be not null when finding by status");
         }
-        return orderRepository.findDistinctProductsByStatus(status);
+        return orderRepository.findAllByStatus(status)
+                .stream()
+                .flatMap(order -> order.products().stream())
+                .collect(groupingBy(ProductOrder::productId, summingLong(ProductOrder::quantity)))
+                .entrySet().stream()
+                .map(entry -> ProductOrder.builder().productId(entry.getKey()).quantity(entry.getValue()).build())
+                .collect(toList());
     }
 
     @Override

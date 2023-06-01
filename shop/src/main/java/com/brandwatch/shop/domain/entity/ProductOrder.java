@@ -1,9 +1,9 @@
 package com.brandwatch.shop.domain.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
@@ -18,13 +18,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class ProductOrder extends BaseEntity {
-    @NotBlank
-    private String name;
+    @NotNull
+    private Long productId;
 
     @PositiveOrZero
     @NotNull
     private Long quantity;
-
-    @ManyToOne
-    private Order order;
 }

@@ -15,8 +15,6 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByStatus(OrderStatus status);
 
-    List<ProductOrder> findDistinctProductsByStatus(OrderStatus status);
-
     @Transactional
     @Modifying
     @Query("UPDATE Order o SET o.status = :status WHERE o.id IN :id")
