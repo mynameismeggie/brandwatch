@@ -1,8 +1,6 @@
 package com.brandwatch.shop.domain.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -13,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Entity
-@Table(name = "product")
+@Table(name = "product_order")
 @Accessors(fluent = true, makeFinal = true)
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)

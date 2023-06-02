@@ -1,10 +1,7 @@
 package com.brandwatch.shop.domain.entity;
 
 import com.brandwatch.shop.domain.enums.OrderStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +12,7 @@ import java.util.List;
 
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Getter
 @Entity
@@ -23,7 +21,7 @@ import static jakarta.persistence.EnumType.STRING;
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class Order extends BaseEntity {
-    @OneToMany(cascade = ALL)
+    @OneToMany(cascade = ALL, fetch = EAGER)
     private List<ProductOrder> products;
 
     @NotNull
