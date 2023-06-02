@@ -33,7 +33,7 @@ public class ProductFacadeImpl implements ProductFacade {
 
         pendingProducts.forEach(pendingProduct -> {
             final var productFromDb = productDbMap.get(pendingProduct.id());
-            if (!pendingProduct.quantity().equals(productFromDb.quantity())) {
+            if (pendingProduct.quantity() > productFromDb.quantity()) {
                 final var missingProduct = ProductOrderResponse.builder()
                         .id(productFromDb.id())
                         .quantity(pendingProduct.quantity() - productFromDb.quantity())

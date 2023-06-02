@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(MockitoExtension.class)
-final class ProductControllerTests {
+final class ProductControllerTest {
     @Mock
     private ProductFacade facade;
 

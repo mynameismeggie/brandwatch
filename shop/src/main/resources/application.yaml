@@ -14,3 +14,8 @@ spring:
         show_sql: 'FALSE'
     hibernate:
       ddl-auto: update
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
