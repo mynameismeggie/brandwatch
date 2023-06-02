@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
@@ -13,5 +14,5 @@ public record OrderResponse(
 
         @NotEmpty
         List<ProductOrderResponse> products
-) {
+) implements Serializable {
 }

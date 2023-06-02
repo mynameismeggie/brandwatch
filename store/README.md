@@ -7,7 +7,7 @@
 - Java `17`
 - Spring Boot `3.1.0`
 - MySQL `8.0.26`
-- Apache Kafka `3.0.7`
+- RabbitMQ `3.1.0`
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ Follow the steps below to get the project up and running on your local machine.
    ```shell 
    ./mvnw clean install
 
-3. Run Kafka and MySQL
+3. Run RabbitMQ and MySQL
 
     ```shell 
     docker compose -f /infrastructure/docker-compose.yaml -p brandwatch up -d

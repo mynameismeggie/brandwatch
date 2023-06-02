@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
@@ -14,5 +15,5 @@ public record OrderResponse(
         Long id,
         @NotEmpty
         List<ProductOrderResponse> products
-) {
+) implements Serializable {
 }
