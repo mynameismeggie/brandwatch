@@ -18,6 +18,8 @@ Follow the steps below to get the project up and running on your local machine.
    ```shell
    git clone https://github.com/your-username/brandwatch.git
 
+> NOTE: Before proceeding, verify that you have executed `./mvnw clean install` in the parent module
+
 2. Build the project using Maven
 
    ```shell 
@@ -26,7 +28,7 @@ Follow the steps below to get the project up and running on your local machine.
 3. Run RabbitMQ and MySQL
 
     ```shell 
-    docker compose -f /infrastructure/docker-compose.yaml -p brandwatch up -d
+    docker compose -f ../infrastructure/docker-compose.yaml -p brandwatch up -d
 
 4. Run the Store application
 
