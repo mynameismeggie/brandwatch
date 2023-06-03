@@ -3,6 +3,7 @@ package com.brandwatch.shop.unit.ingress.facade;
 import com.brandwatch.shop.domain.entity.Order;
 import com.brandwatch.shop.domain.entity.ProductOrder;
 import com.brandwatch.shop.domain.service.OrderService;
+import com.brandwatch.shop.egress.producer.OrderMessageProducer;
 import com.brandwatch.shop.ingress.facade.impl.OrderFacadeImpl;
 import com.brandwatch.shop.ingress.mapper.OrderMapper;
 import com.brandwatch.shop.ingress.request.CreateOrderRequest;
@@ -31,6 +32,8 @@ public class OrderFacadeTest {
     private OrderService orderService;
     @Mock
     private OrderMapper orderMapper;
+    @Mock
+    private OrderMessageProducer orderMessageProducer;
     @InjectMocks
     private OrderFacadeImpl test;
 
@@ -109,7 +112,7 @@ public class OrderFacadeTest {
                         .build()))
                 .build();
 
-        when(orderMapper.toEntity(request,PENDING)).thenReturn(entityToSave);
+        when(orderMapper.toEntity(request, PENDING)).thenReturn(entityToSave);
         when(orderService.create(entityToSave)).thenReturn(entityToSave);
 
         final OrderRequest mappedEntity = OrderRequest.builder()
@@ -131,7 +134,7 @@ public class OrderFacadeTest {
     }
 
     @Test
-    void handleSuccessfulOrders_Success(){
+    void handleSuccessfulOrders_Success() {
         // given
         final var orderRequest = List.of(OrderRequest.builder()
                 .products(List.of(ProductOrderRequest.builder()
@@ -153,6 +156,6 @@ public class OrderFacadeTest {
         test.handleSuccessfulOrders(orderRequest);
         // then
         verify(orderMapper).toEntity(orderRequest);
-        verify(orderService).updateStatusByIds(List.of(1L),SUCCESSFUL);
+        verify(orderService).updateStatusByIds(List.of(1L), SUCCESSFUL);
     }
 }
